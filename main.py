@@ -4,8 +4,9 @@ import pyperclip
 from tkinter import messagebox
 import random
 import string
+import json
 
-data_path = Path(__file__).parent / "data.txt"
+data_path = Path(__file__).parent / "data.json"
 
 window = Tk()
 window.title("Password Manager")
@@ -17,6 +18,24 @@ window.config(padx=50, pady=50)
 image_path = Path(__file__).parent / "logo.png"
 logo_img = PhotoImage(file=str(image_path))
 canvas.create_image(100, 100, image=logo_img)
+
+# ---------------------------- SEARCH PASSWORD ------------------------------- #
+def find_password():
+    user_input = website_entry.get()
+    try:
+        with open(data_path, "r") as file:
+            data = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        messagebox.showerror(title="Error", message="No Data file found")
+    else:
+        if user_input in data:
+            email = data[user_input]["email"]
+            password = data[user_input]["password"]
+            messagebox.showinfo(title=f"{user_input}", message=f"Email: {email}\nPassword: {password}")
+        else:
+            messagebox.showerror(title="Error", message="No details for the website exists")
+        website_entry.delete(0, END)
+
 
 
 
@@ -37,15 +56,23 @@ def save_password():
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
+    new_data = {website: {"email": email, "password": password}}
 
     if len(website) == 0 or len(password) == 0:
         messagebox.showwarning(title="Oops", message="Please don't leave any fields empty!") 
+        return
     else:
-        is_ok = messagebox.askokcancel(title=website, message=f"These are the details entered: \nEmail: {email} \nPassword: {password} \nIs it ok to save?")
-
-        if is_ok and website and email and password:
-            with open(data_path, "a") as file:
-                file.write(f"{website} | {email} | {password}\n")
+        try:
+            with open(data_path, "r") as file:
+                data = json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError):
+                with open(data_path, "w") as file:
+                    json.dump(new_data, file, indent=4)
+        else:
+            data.update(new_data)
+            with open(data_path, "w") as file:
+                json.dump(data, file, indent=4)
+        finally:
             website_entry.delete(0, END)
             password_entry.delete(0, END)
 
@@ -60,8 +87,8 @@ def save_password():
 website_label = Label(window, text="Website: ")
 website_label.grid(row=1, column=0)
 
-website_entry = Entry(window, width=36)
-website_entry.grid(row=1, column=1, columnspan=2)
+website_entry = Entry(window, width=21)
+website_entry.grid(row=1, column=1)
 website_entry.focus()
 
 #Label Email/Username
@@ -85,6 +112,10 @@ generate_password_button.grid(row=3, column=2)
 #Button Add
 add_button = Button(window, text="Add", width=33, command=save_password, pady=0)
 add_button.grid(row=4, column=1, columnspan=2)
+
+#Button Search
+search_button = Button(window, text="Search", width=11, command=find_password, pady=0)
+search_button.grid(row=1, column=2)
 
 
 

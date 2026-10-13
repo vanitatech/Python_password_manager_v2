@@ -1,7 +1,0 @@
-Amazon | vanita@example.com | 23456
-Google | vanita@example.com | 65434687674544
-github | vanita@example.com | Qwerty
-Amaazon | vanita@example.com | website
-DataHUb | vanita@example.com | password123
-PHP | vanita@example.com | Iv_d7amRhn%M
-facebook.com | vanita@example.com | l\h084iZS0~S
