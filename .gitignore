@@ -9,3 +9,22 @@ __pycache__/
 .venv/
 venv/
 env/
+
+# Local tooling and generated files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Environment credentials
+.env
+.env.*
+!.env.example
